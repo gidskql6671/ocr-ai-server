@@ -53,6 +53,7 @@ def make_scan_image(image, width, ksize=(5, 5), min_threshold=75, max_threshold=
 
 
 def ocr(path):
+
     image = cv2.imread(path, cv2.IMREAD_COLOR)
 
     preprocessed_image = make_scan_image(image, width=200, ksize=(5, 5), min_threshold=20, max_threshold=100)
@@ -61,6 +62,8 @@ def ocr(path):
     reader = Reader(lang_list=['ko', 'en'], gpu=True)
 
     simple_results = reader.readtext(preprocessed_image, detail=0)
+
+    print(simple_results)
 
     return simple_results
 

@@ -1,8 +1,10 @@
-from django.http import HttpResponse
-from . import ocr_module
+from django.http import JsonResponse
+from . import ocr_module, spell_checker
 
 
 def ocr_image(request):
-    result = ocr_module.ocr(request.GET['path'])
+    ocr_result = ocr_module.ocr(request.GET['path'])
 
-    return HttpResponse(result)
+    spell_check_result = spell_checker.check(''.join(ocr_result))
+
+    return JsonResponse(spell_check_result)
