@@ -13,5 +13,6 @@ def check(input_str):
 
     return {
         "answer_percent": (checked_count - error_count) / checked_count,
-        "answer": spell_check_result.checked
+        "correct_string": spell_check_result.checked,
+        "origin_string": input_str
     }
