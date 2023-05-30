@@ -19,27 +19,34 @@ def check(input_str):
 
 
 def check_with_correct(input_str, correct_str):
-    input_str_len = len(input_str)
-    correct_str_len = len(correct_str)
-
-    if input_str == correct_str:
-        answer_percent = 1.
-    else:
-        lcs_len = get_lcs_len(input_str, correct_str, input_str_len, correct_str_len)
-
-        if lcs_len < correct_str_len:
-            answer_percent = lcs_len / correct_str_len
-        else:
-            answer_percent = correct_str_len / input_str_len
-
     return {
-        "answer_percent": answer_percent,
+        "answer_percent": get_answer_percent(input_str, correct_str),
         "correct_string": correct_str,
         "origin_string": input_str
     }
 
 
-def get_lcs_len(s1, s2, m, n):
+def get_answer_percent(input_str, correct_str):
+    input_str = input_str.replace(" ", "")
+    correct_str = correct_str.replace(" ", "")
+    input_str_len = len(input_str)
+    correct_str_len = len(correct_str)
+
+    if input_str == correct_str:
+        return 1.0
+    else:
+        lcs_len = get_lcs_len(input_str, correct_str)
+
+        if lcs_len < correct_str_len:
+            return lcs_len / correct_str_len
+        else:
+            return correct_str_len / input_str_len
+
+
+def get_lcs_len(s1, s2):
+    m = len(s1)
+    n = len(s2)
+
     dp = [[0 for _ in range(n + 1)] for _ in range(2)]
 
     i = 0
