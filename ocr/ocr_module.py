@@ -1,6 +1,7 @@
 from imutils.perspective import four_point_transform
 import imutils
 from easyocr import Reader
+from collections import deque
 import cv2
 
 
@@ -52,18 +53,39 @@ def make_scan_image(image, width, ksize=(5, 5), min_threshold=75, max_threshold=
     return transform_image
 
 
-def ocr(path):
-
+def ocr(path, use_custom_model=False):
     image = cv2.imread(path, cv2.IMREAD_COLOR)
 
     preprocessed_image = make_scan_image(image, width=200, ksize=(5, 5), min_threshold=20, max_threshold=100)
 
     print("[INFO] OCR'ing input image...")
-    reader = Reader(lang_list=['ko', 'en'], gpu=True)
+
+    if use_custom_model:
+        reader = Reader(lang_list=['ko'], gpu=True,
+                        model_storage_directory='./ocr/model',
+                        user_network_directory='./ocr/user_network',
+                        recog_network='custom')
+    else:
+        reader = Reader(lang_list=['ko'], gpu=True)
 
     simple_results = reader.readtext(preprocessed_image, detail=0)
 
     print(simple_results)
 
-    return simple_results
+    return post_process(simple_results)
+
+
+def post_process(ocr_result):
+    ocr_string = ''.join(ocr_result)
+
+    dq = deque()
+    for c in ocr_string:
+        if len(dq) == 0 or dq[-1].isspace():
+            if not c.isspace():
+                dq.append(c)
+        else:
+            dq.append(c)
+
+    return ''.join(dq)
+
 
